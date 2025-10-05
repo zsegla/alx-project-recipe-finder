@@ -1,4 +1,6 @@
-import React from "react";
+import React, { useEffect, useState } from "react";
+import { useLocation, useParams } from "react-router-dom";
+import axios from "axios";
 
 function Ingredients({ meal }) {
   const items = [];
@@ -16,8 +18,35 @@ function Ingredients({ meal }) {
   );
 }
 
-export default function RecipeDetails({ recipe, onBack }) {
+export default function RecipeDetails({ recipe: propRecipe, onBack }) {
+  const location = useLocation();
+  const params = useParams();
+  const [recipe, setRecipe] = useState(propRecipe || location.state?.meal || null);
+  const [loading, setLoading] = useState(false);
+
+  useEffect(() => {
+    async function fetchById(id) {
+      setLoading(true);
+      try {
+        const res = await axios.get(
+          `https://www.themealdb.com/api/json/v1/1/lookup.php?i=${id}`
+        );
+        if (res.data && res.data.meals) setRecipe(res.data.meals[0]);
+      } catch (e) {
+        // ignore — parent handles errors
+      } finally {
+        setLoading(false);
+      }
+    }
+
+    if (!recipe && params.id) {
+      fetchById(params.id);
+    }
+  }, [params.id]);
+
+  if (loading) return <div>Loading recipe...</div>;
   if (!recipe) return null;
+
   const youtube = recipe.strYoutube;
   const embed = youtube ? youtube.replace("watch?v=", "embed/") : null;
 

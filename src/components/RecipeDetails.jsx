@@ -21,7 +21,9 @@ function Ingredients({ meal }) {
 export default function RecipeDetails({ recipe: propRecipe, onBack }) {
   const location = useLocation();
   const params = useParams();
-  const [recipe, setRecipe] = useState(propRecipe || location.state?.meal || null);
+  const [recipe, setRecipe] = useState(
+    propRecipe || location.state?.meal || null
+  );
   const [loading, setLoading] = useState(false);
 
   useEffect(() => {

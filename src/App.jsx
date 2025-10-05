@@ -13,7 +13,7 @@ function Home({
   setError,
   setSelected,
   loading,
-  error
+  error,
 }) {
   return (
     <div>
@@ -64,7 +64,12 @@ export default function App() {
           />
           <Route
             path="/recipe/:id"
-            element={<RecipeDetails recipe={selected} onBack={() => setSelected(null)} />}
+            element={
+              <RecipeDetails
+                recipe={selected}
+                onBack={() => setSelected(null)}
+              />
+            }
           />
         </Routes>
       </div>

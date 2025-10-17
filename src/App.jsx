@@ -3,6 +3,8 @@ import { Routes, Route } from "react-router-dom";
 import SearchBar from "./components/SearchBar";
 import RecipeList from "./components/RecipeList";
 import RecipeDetails from "./components/RecipeDetails";
+import Header from "./components/Header";
+import Favorites from "./components/Favorites";
 
 function Home({
   query,
@@ -45,6 +47,7 @@ export default function App() {
   return (
     <div className="min-h-screen bg-gray-100 p-4">
       <div className="max-w-4xl mx-auto">
+        <Header />
         <Routes>
           <Route
             path="/"
@@ -71,6 +74,7 @@ export default function App() {
               />
             }
           />
+          <Route path="/favorites" element={<Favorites />} />
         </Routes>
       </div>
     </div>

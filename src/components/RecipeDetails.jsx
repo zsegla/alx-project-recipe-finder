@@ -1,6 +1,7 @@
 import React, { useEffect, useState } from "react";
 import { useLocation, useParams } from "react-router-dom";
 import axios from "axios";
+import { useFavorites } from "../contexts/FavoritesContext";
 
 function Ingredients({ meal }) {
   const items = [];
@@ -25,6 +26,10 @@ export default function RecipeDetails({ recipe: propRecipe, onBack }) {
     propRecipe || location.state?.meal || null
   );
   const [loading, setLoading] = useState(false);
+  const { favorites, addFavorite, removeFavorite } = useFavorites();
+
+  const isFavorite =
+    recipe && favorites.some((m) => m.idMeal === recipe.idMeal);
 
   useEffect(() => {
     async function fetchById(id) {
@@ -54,9 +59,28 @@ export default function RecipeDetails({ recipe: propRecipe, onBack }) {
 
   return (
     <div className="bg-white p-4 rounded shadow mt-4">
-      <button onClick={onBack} className="text-blue-600 mb-3">
-        ← Back
-      </button>
+      <div className="flex items-center justify-between">
+        <button onClick={onBack} className="text-blue-600 mb-3">
+          ← Back
+        </button>
+        <div>
+          {isFavorite ? (
+            <button
+              className="text-red-600 mr-2"
+              onClick={() => removeFavorite(recipe.idMeal)}
+            >
+              Remove favorite
+            </button>
+          ) : (
+            <button
+              className="text-green-600 mr-2"
+              onClick={() => addFavorite(recipe)}
+            >
+              Add to favorites
+            </button>
+          )}
+        </div>
+      </div>
       <div className="flex gap-4">
         <img
           src={recipe.strMealThumb}

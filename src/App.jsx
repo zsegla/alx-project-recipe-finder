@@ -1,82 +1,62 @@
-import React, { useState } from "react";
-import { Routes, Route } from "react-router-dom";
-import SearchBar from "./components/SearchBar";
-import RecipeList from "./components/RecipeList";
-import RecipeDetails from "./components/RecipeDetails";
+import { Authenticated, Unauthenticated, useQuery } from "convex/react";
+import { api } from "../convex/_generated/api";
+import { SignInForm } from "./SignInForm";
+import { Toaster } from "sonner";
+import { BrowserRouter as Router, Routes, Route } from "react-router-dom";
 import Header from "./components/Header";
-import Favorites from "./components/Favorites";
+import Home from "./pages/Home";
+import RecipeDetail from "./pages/RecipeDetail";
+import Favorites from "./pages/Favorites";
+import ShoppingList from "./pages/ShoppingList";
 
-function Home({
-  query,
-  setQuery,
-  recipes,
-  setRecipes,
-  setLoading,
-  setError,
-  setSelected,
-  loading,
-  error,
-}) {
+export default function App() {
   return (
-    <div>
-      <h1 className="text-3xl font-bold mb-4">Recipe Finder</h1>
-      <SearchBar
-        query={query}
-        setQuery={setQuery}
-        setRecipes={setRecipes}
-        setLoading={setLoading}
-        setError={setError}
-        setSelected={setSelected}
-      />
-
-      {error && <div className="text-red-600 mt-4">{error}</div>}
-      {loading && <div className="mt-4">Loading...</div>}
-
-      <RecipeList recipes={recipes} onSelect={setSelected} />
-    </div>
+    <Router>
+      <div className="min-h-screen flex flex-col bg-gray-50 dark:bg-gray-900">
+        <Header />
+        <main className="flex-1">
+          <Content />
+        </main>
+        <Toaster />
+      </div>
+    </Router>
   );
 }
 
-export default function App() {
-  const [query, setQuery] = useState("");
-  const [recipes, setRecipes] = useState([]);
-  const [selected, setSelected] = useState(null);
-  const [loading, setLoading] = useState(false);
-  const [error, setError] = useState(null);
+function Content() {
+  const loggedInUser = useQuery(api.auth.loggedInUser);
+
+  if (loggedInUser === undefined) {
+    return (
+      <div className="flex justify-center items-center min-h-96">
+        <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-blue-600"></div>
+      </div>
+    );
+  }
 
   return (
-    <div className="min-h-screen bg-gray-100 p-4">
-      <div className="max-w-4xl mx-auto">
-        <Header />
+    <>
+      <Authenticated>
         <Routes>
-          <Route
-            path="/"
-            element={
-              <Home
-                query={query}
-                setQuery={setQuery}
-                recipes={recipes}
-                setRecipes={setRecipes}
-                setLoading={setLoading}
-                setError={setError}
-                setSelected={setSelected}
-                loading={loading}
-                error={error}
-              />
-            }
-          />
-          <Route
-            path="/recipe/:id"
-            element={
-              <RecipeDetails
-                recipe={selected}
-                onBack={() => setSelected(null)}
-              />
-            }
-          />
+          <Route path="/" element={<Home />} />
+          <Route path="/recipe/:id" element={<RecipeDetail />} />
           <Route path="/favorites" element={<Favorites />} />
+          <Route path="/shopping-list" element={<ShoppingList />} />
         </Routes>
-      </div>
-    </div>
+      </Authenticated>
+      <Unauthenticated>
+        <div className="flex flex-col items-center justify-center min-h-96 px-4 dark:bg-gray-900">
+          <div className="w-full max-w-md mx-auto text-center">
+            <h1 className="text-4xl font-bold text-gray-900 dark:text-white mb-4">
+              MealFinder
+            </h1>
+            <p className="text-xl text-gray-600 dark:text-gray-300 mb-8">
+              Discover delicious recipes from around the world
+            </p>
+            <SignInForm />
+          </div>
+        </div>
+      </Unauthenticated>
+    </>
   );
 }

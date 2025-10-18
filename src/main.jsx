@@ -1,16 +1,13 @@
-import React from "react";
 import { createRoot } from "react-dom/client";
-import { BrowserRouter } from "react-router-dom";
-import App from "./App";
-import { FavoritesProvider } from "./contexts/FavoritesContext";
+import { ConvexAuthProvider } from "@convex-dev/auth/react";
+import { ConvexReactClient } from "convex/react";
 import "./index.css";
+import App from "./App";
+
+const convex = new ConvexReactClient(import.meta.env.VITE_CONVEX_URL);
 
 createRoot(document.getElementById("root")).render(
-  <React.StrictMode>
-    <BrowserRouter>
-      <FavoritesProvider>
-        <App />
-      </FavoritesProvider>
-    </BrowserRouter>
-  </React.StrictMode>
+  <ConvexAuthProvider client={convex}>
+    <App />
+  </ConvexAuthProvider>
 );

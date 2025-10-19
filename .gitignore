@@ -1,3 +1,4 @@
+<<<<<<< HEAD
 # Logs
 logs
 *.log
@@ -25,3 +26,8 @@ dist-ssr
 
 # Ignored for the template, you probably want to remove it:
 package-lock.json
+=======
+node_modules/
+dist/
+/.env
+>>>>>>> 19ccd7e71516dfc365f649aef66e18c66460f550
